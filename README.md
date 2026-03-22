@@ -1,20 +1,21 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+**Krowe Founder Console** — platform app (roadmap, dashboard shell). Roadmap loads by `?session_id=` via the Supabase anon key until auth is added.
+
+See [`../README.md`](../README.md) for environment variables and the manual test flow.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Default dev server: [http://localhost:3000](http://localhost:3000). If the signup app also uses port 3000, run the platform on another port, for example:
+
+```bash
+npm run dev -- -p 3001
+```
+
+Set `NEXT_PUBLIC_PLATFORM_URL` in the signup app to match (e.g. `http://localhost:3001`).
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

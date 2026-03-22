@@ -33,8 +33,8 @@ export function SectionProgress({ sections = defaultSections }: SectionProgressP
         </div>
       </div>
       <div className="mt-4 space-y-3">
-        {sections.map((section) => (
-          <div key={section.name}>
+        {sections.map((section, index) => (
+          <div key={`${section.name}-${index}`}>
             <div className="mb-1 flex items-center justify-between text-sm">
               <span className="text-gray-700">{section.name}</span>
               <span className="text-gray-500">{section.progress}%</span>

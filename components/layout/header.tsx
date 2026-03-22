@@ -4,24 +4,28 @@ import Link from "next/link"
 import { Bell, Plus } from "lucide-react"
 import { ProgressBar } from "@/components/krowe"
 import { MobileNav } from "./mobile-nav"
+import { withSessionQuery } from "@/lib/platform/nav"
 
 interface HeaderProps {
   progress?: number
   userName?: string
+  sessionId?: string | null
   onStartSprint?: () => void
 }
 
 export function Header({
   progress = 42,
   userName = "Marcus",
+  sessionId = null,
   onStartSprint,
 }: HeaderProps) {
+  const dashboardHref = withSessionQuery("/dashboard", sessionId)
   return (
     <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 lg:px-6">
       {/* Left: Mobile nav + Logo (mobile only) */}
       <div className="flex items-center gap-3 lg:hidden">
-        <MobileNav progress={progress} />
-        <Link href="/dashboard" className="flex items-center gap-2">
+        <MobileNav progress={progress} sessionId={sessionId} />
+        <Link href={dashboardHref} className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-500">
             <span className="text-sm font-bold text-white">K</span>
           </div>

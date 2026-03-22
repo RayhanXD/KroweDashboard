@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { KroweCard, OverlineLabel, TaskRow } from "@/components/krowe"
 import { ListTodo, ArrowRight } from "lucide-react"
+import { withSessionQuery } from "@/lib/platform/nav"
 
 interface Task {
   id: string
@@ -14,6 +15,8 @@ interface Task {
 
 interface TopTasksProps {
   tasks?: Task[]
+  /** Preserve `session_id` when linking to Tasks. */
+  sessionId?: string | null
 }
 
 const defaultTasks: Task[] = [
@@ -24,7 +27,11 @@ const defaultTasks: Task[] = [
   { id: "5", label: "Draft social media launch posts", completed: false, priority: "low" },
 ]
 
-export function TopTasks({ tasks: initialTasks = defaultTasks }: TopTasksProps) {
+export function TopTasks({
+  tasks: initialTasks = defaultTasks,
+  sessionId = null,
+}: TopTasksProps) {
+  const tasksHref = withSessionQuery("/tasks", sessionId)
   const [tasks, setTasks] = useState(initialTasks)
 
   const handleToggle = (taskId: string) => {
@@ -50,7 +57,7 @@ export function TopTasks({ tasks: initialTasks = defaultTasks }: TopTasksProps) 
           </div>
         </div>
         <Link
-          href="/tasks"
+          href={tasksHref}
           className="flex items-center gap-1 text-sm font-medium text-orange-600 hover:text-orange-700"
         >
           View all

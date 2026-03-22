@@ -15,6 +15,7 @@ import {
   ChevronRight,
 } from "lucide-react"
 import { ProgressBar } from "@/components/krowe"
+import { withSessionQuery } from "@/lib/platform/nav"
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -26,11 +27,17 @@ const navItems = [
 
 interface SidebarProps {
   progress?: number
+  sessionId?: string | null
   collapsed?: boolean
   onToggle?: () => void
 }
 
-export function Sidebar({ progress = 42, collapsed = false, onToggle }: SidebarProps) {
+export function Sidebar({
+  progress = 42,
+  sessionId = null,
+  collapsed = false,
+  onToggle,
+}: SidebarProps) {
   const pathname = usePathname()
 
   return (
@@ -46,7 +53,10 @@ export function Sidebar({ progress = 42, collapsed = false, onToggle }: SidebarP
           "flex h-16 items-center border-b border-gray-200",
           collapsed ? "justify-center px-2" : "px-4"
         )}>
-          <Link href="/dashboard" className="flex items-center gap-2">
+          <Link
+            href={withSessionQuery("/dashboard", sessionId)}
+            className="flex items-center gap-2"
+          >
             <Image
               src="/KroweLogo.png"
               alt="Krowe"
@@ -62,10 +72,11 @@ export function Sidebar({ progress = 42, collapsed = false, onToggle }: SidebarP
         <nav className={cn("flex-1 space-y-1 py-4", collapsed ? "px-2" : "px-3")}>
           {navItems.map((item) => {
             const isActive = pathname === item.href
+            const href = withSessionQuery(item.href, sessionId)
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={href}
                 title={collapsed ? item.label : undefined}
                 className={cn(
                   "flex items-center rounded-lg text-sm font-medium transition-colors",
@@ -102,7 +113,7 @@ export function Sidebar({ progress = 42, collapsed = false, onToggle }: SidebarP
 
           {/* Settings link */}
           <Link
-            href="/settings"
+            href={withSessionQuery("/settings", sessionId)}
             title={collapsed ? "Settings" : undefined}
             className={cn(
               "flex items-center rounded-lg text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900",

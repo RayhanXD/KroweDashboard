@@ -1,6 +1,7 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
+import { usePlatformSession } from "@/components/platform-session-provider";
 import {
   WelcomeBanner,
   CurrentIdea,
@@ -13,36 +14,69 @@ import {
   ProTip,
   StreakCard,
   UserProfile,
-} from "@/components/dashboard"
+} from "@/components/dashboard";
 
 export default function DashboardPage() {
-  const [showProTip, setShowProTip] = useState(true)
+  const [showProTip, setShowProTip] = useState(true);
+  const { sessionId, data, loading, error } = usePlatformSession();
+
+  if (!sessionId) {
+    return (
+      <div className="mx-auto max-w-2xl rounded-lg border border-dashed border-gray-200 bg-white p-8 text-center">
+        <p className="text-gray-700">
+          Open this dashboard from signup using <strong>Continue to dashboard</strong>, or append{" "}
+          <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm">?session_id=</code> plus your
+          session UUID to the URL.
+        </p>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <p className="text-center text-gray-600" aria-live="polite">
+        Loading dashboard…
+      </p>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <p className="text-center text-red-600" role="alert">
+        {error ?? "Could not load dashboard data."}
+      </p>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
-      {/* Welcome Banner - Full width */}
-      <WelcomeBanner />
+      <WelcomeBanner userName={data.welcomeUserName} />
 
-      {/* Main grid */}
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Left column - 2 cols on desktop */}
         <div className="space-y-6 lg:col-span-2">
-          {/* Featured row */}
           <div className="grid gap-6 md:grid-cols-2">
-            <TodaysFocus />
-            <CurrentIdea />
+            <TodaysFocus key={`${sessionId}-focus`} tasks={data.todaysFocusTasks} />
+            <CurrentIdea
+              key={`${sessionId}-idea`}
+              ideaName={data.currentIdeaTitle}
+              phaseName={data.currentIdeaPhaseLabel}
+              progress={data.journeyProgressPercent}
+              description={data.currentIdeaDescription}
+            />
           </div>
 
-          {/* Secondary row */}
           <div className="grid gap-6 md:grid-cols-2">
-            <NextMilestone />
-            <SectionProgress />
+            <NextMilestone
+              milestoneName={data.nextMilestone.milestoneName}
+              dueDate={data.nextMilestone.dueDate}
+              daysRemaining={data.nextMilestone.daysRemaining}
+              description={data.nextMilestone.description}
+            />
+            <SectionProgress sections={data.sectionProgress} />
           </div>
 
-          {/* Tasks */}
-          <TopTasks />
+          <TopTasks key={`${sessionId}-tasks`} tasks={data.topTasks} sessionId={sessionId} />
 
-          {/* Pro Tip */}
           {showProTip && (
             <ProTip
               tip="Focus on one task at a time. Use the Focus Sprint feature to block distractions and track your progress."
@@ -51,14 +85,13 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Right column - 1 col on desktop */}
         <div className="space-y-6">
-          <UserProfile />
+          <UserProfile userName={data.welcomeUserName} />
           <StreakCard />
           <KPIMetrics />
           <TeamMembers />
         </div>
       </div>
     </div>
-  )
+  );
 }
